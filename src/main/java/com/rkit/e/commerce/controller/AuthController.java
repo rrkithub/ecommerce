@@ -3,6 +3,8 @@ package com.rkit.e.commerce.controller;
 import com.rkit.e.commerce.dto.UserDTO;
 import com.rkit.e.commerce.service.AuthService;
 import com.rkit.e.commerce.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +16,8 @@ import static com.rkit.e.commerce.util.Constants.*;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private AuthService authService;
