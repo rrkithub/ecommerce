@@ -23,6 +23,7 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests( auth -> auth
                         .requestMatchers("/auth/register","/auth/login").permitAll()
+                        .requestMatchers("/product","/products").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 ).httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults());
