@@ -1,5 +1,6 @@
 package com.rkit.e.commerce.service;
 
+import com.paypal.api.payments.Payment;
 import com.rkit.e.commerce.dto.OrderDTO;
 import com.rkit.e.commerce.dto.OrderItemDTO;
 import com.rkit.e.commerce.entity.*;
@@ -32,6 +33,8 @@ public class OrderService {
     @Autowired
     private CartService cartService;
 
+    @Autowired
+    private PaypalService paypalService;
     public OrderDTO placeOrder() {
         String username = getCurrentUsername();
         User user = userRepository.findByUserName(username)
@@ -68,6 +71,17 @@ public class OrderService {
 
         orderRepository.save(order);
 
+        Payment payment = paypalService.createAndExecutePayment(totalAmount.doubleValue(), "USD", "E-Commerce Order Payment", username);
+
+        if (payment != null && "created".equalsIgnoreCase(payment.getState())) {
+            order.setStatus("PAID");
+            orderRepository.save(order);
+        } else {
+            order.setStatus("FAILED");
+            orderRepository.save(order);
+            throw new RuntimeException("Payment failed. Order was not processed.");
+        }
+
         cartService.clearCart();
 
         return new OrderDTO(
@@ -85,6 +99,7 @@ public class OrderService {
                 order.getOrderDate()
         );
     }
+
 
     public List<OrderDTO> getUserOrders() {
         String username = getCurrentUsername();
