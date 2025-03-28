@@ -22,7 +22,8 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests( auth -> auth
-                        .requestMatchers("/auth/register").permitAll()
+                        .requestMatchers("/auth/register","/auth/login").permitAll()
+                        .requestMatchers("/product","/products").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 ).httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults());
